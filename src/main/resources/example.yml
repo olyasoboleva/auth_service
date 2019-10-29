@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: auth-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    driver-class-name: org.postgresql.Driver
+    username: username
+    password: password
+    initialization-mode: always
+  jpa:
+    properties:
+      hibernate:
+        default_schema: schema_name
+        dialect: org.hibernate.dialect.PostgreSQL95Dialect
+        jdbc:
+          lob:
+            non_contextual_creation: true
+    hibernate:
+      ddl-auto: update
+
+server:
+  port: 8090
