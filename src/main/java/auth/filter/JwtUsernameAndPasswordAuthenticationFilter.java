@@ -93,6 +93,10 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
 
         // Add token to header
         response.addHeader(jwtConfig.getHeader(), jwtConfig.getPrefix() + token);
+
+        String accountType = "{ \"accType\" : \""+userApp.isAttendee()+"\" }";
+        response.setContentLength(accountType.length());
+        response.getWriter().write(accountType);
         log.info("AUTHENTICATION - "+auth.getName());
     }
 

@@ -15,7 +15,6 @@ import auth.repository.UserRepository;
 public class UserService {
 
     private final UserRepository userRepository;
-
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public UserApp getUserByUsername(String username){
