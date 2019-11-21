@@ -9,5 +9,5 @@ public class Organization {
     private String name;
     private String phone;
     private String email;
-    private String details;
+    private String info;
 }

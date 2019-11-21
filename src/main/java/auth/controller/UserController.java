@@ -27,9 +27,14 @@ public class UserController {
     @PostMapping(value = "/signup/attendee", produces = "application/json")
     public @ResponseBody ResponseEntity signup(@RequestBody Attendee attendee){
         ResponseEntity responseEntity = registerUser(attendee.getUser());
+        UserApp user = (UserApp) responseEntity.getBody();
         if (responseEntity.getStatusCode().is2xxSuccessful()) {
-            attendee.setUser((UserApp) responseEntity.getBody());
+            attendee.setUser(user);
             responseEntity = createAttendee(attendee);
+        }
+        if (!responseEntity.getStatusCode().is2xxSuccessful()) {
+            userService.deleteUser(user);
+            log.info("DELETE - attendee "+user.getUsername());
         }
         return responseEntity;
     }
@@ -37,9 +42,14 @@ public class UserController {
     @PostMapping(value = "/signup/organization", produces = "application/json")
     public @ResponseBody ResponseEntity signup(@RequestBody Organization organization){
         ResponseEntity responseEntity = registerUser(organization.getUser());
+        UserApp user = (UserApp) responseEntity.getBody();
         if (responseEntity.getStatusCode().is2xxSuccessful()) {
-            organization.setUser((UserApp) responseEntity.getBody());
+            organization.setUser(user);
             responseEntity = createOrganization(organization);
+        }
+        if (!responseEntity.getStatusCode().is2xxSuccessful()) {
+            userService.deleteUser(user);
+            log.info("DELETE - organization "+user.getUsername());
         }
         return responseEntity;
     }
@@ -68,7 +78,7 @@ public class UserController {
                 .add("name", attendee.getName())
                 .add("surname", attendee.getSurname())
                 .add("email", attendee.getEmail())
-                .add("skills", attendee.getInfo())
+                .add("skills", attendee.getSkills())
                 .build();
         Request request = new Request.Builder()
                 .url("http://localhost:8080/chat/add/attendee")
@@ -90,10 +100,10 @@ public class UserController {
                 .add("name", organization.getName())
                 .add("phone", organization.getPhone())
                 .add("email", organization.getEmail())
-                .add("info", organization.getDetails())
+                .add("info", organization.getInfo())
                 .build();
         Request request = new Request.Builder()
-                .url("http://localhost:8080/event/add/org")
+                .url("http://localhost:8080/event/save/organization")
                 .post(formBody)
                 .build();
         try {

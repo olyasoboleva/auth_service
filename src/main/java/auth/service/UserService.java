@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import auth.repository.UserRepository;
 
 @RequiredArgsConstructor
-@Service("userService")
+@Service
 public class UserService {
 
     private final UserRepository userRepository;
@@ -24,5 +24,9 @@ public class UserService {
     public UserApp createUser(UserApp userApp){
         userApp.setPassword(bCryptPasswordEncoder.encode(userApp.getPassword()));
         return userRepository.save(userApp);
+    }
+
+    public void deleteUser(UserApp userApp){
+        userRepository.delete(userApp);
     }
 }
