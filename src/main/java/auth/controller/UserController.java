@@ -27,14 +27,15 @@ public class UserController {
     @PostMapping(value = "/signup/attendee", produces = "application/json")
     public @ResponseBody ResponseEntity signup(@RequestBody Attendee attendee){
         ResponseEntity responseEntity = registerUser(attendee.getUser());
-        UserApp user = (UserApp) responseEntity.getBody();
+        UserApp user;
         if (responseEntity.getStatusCode().is2xxSuccessful()) {
+            user = (UserApp) responseEntity.getBody();
             attendee.setUser(user);
             responseEntity = createAttendee(attendee);
-        }
-        if (!responseEntity.getStatusCode().is2xxSuccessful()) {
-            userService.deleteUser(user);
-            log.info("DELETE - attendee "+user.getUsername());
+            if (!responseEntity.getStatusCode().is2xxSuccessful()) {
+                userService.deleteUser(user);
+                log.info("DELETE - attendee "+user.getUsername());
+            }
         }
         return responseEntity;
     }
@@ -42,14 +43,15 @@ public class UserController {
     @PostMapping(value = "/signup/organization", produces = "application/json")
     public @ResponseBody ResponseEntity signup(@RequestBody Organization organization){
         ResponseEntity responseEntity = registerUser(organization.getUser());
-        UserApp user = (UserApp) responseEntity.getBody();
+        UserApp user;
         if (responseEntity.getStatusCode().is2xxSuccessful()) {
+            user = (UserApp) responseEntity.getBody();
             organization.setUser(user);
             responseEntity = createOrganization(organization);
-        }
-        if (!responseEntity.getStatusCode().is2xxSuccessful()) {
-            userService.deleteUser(user);
-            log.info("DELETE - organization "+user.getUsername());
+            if (!responseEntity.getStatusCode().is2xxSuccessful()) {
+                userService.deleteUser(user);
+                log.info("DELETE - organization "+user.getUsername());
+            }
         }
         return responseEntity;
     }
@@ -65,6 +67,7 @@ public class UserController {
         }
         userApp.setUsername(user.getUsername());
         userApp.setPassword(user.getPassword());
+        userApp.setAttendee(user.isAttendee());
         userService.createUser(userApp);
         log.info("SIGNUP - "+user.getUsername());
         return ResponseEntity.status(HttpStatus.OK).body(userApp);
@@ -81,7 +84,7 @@ public class UserController {
                 .add("skills", attendee.getSkills())
                 .build();
         Request request = new Request.Builder()
-                .url("http://localhost:8080/chat/add/attendee")
+                .url("http://localhost:8080/chat/save/attendee")
                 .post(formBody)
                 .build();
         try {
